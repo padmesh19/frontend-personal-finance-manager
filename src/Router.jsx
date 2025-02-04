@@ -1,27 +1,41 @@
 import { createBrowserRouter } from "react-router";
-import App from "./App";
+
 import Register from "./pages/Register";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
-import authLoader from "./loaders/unit/authLoader";
-import Logout from "./components/Logout";
 import BudgetList from "./pages/budget/BudgetList";
 import CategoryList from "./pages/category/categoryList";
+import ProtectedRoute from "./ProtectedRoutes";
+import Layout from "./layouts/Layout";
 
 const routes = [
   {
-    path: "/",
-    element: <App />,
-    loader: authLoader,
+    path: '/',
+    element: <Layout>
+      <ProtectedRoute />
+    </Layout>,
     children: [
-      { path: "", element: <Home /> },
-      { path: "register", element: <Register /> },
-      { path: "login", element: <Login /> },
-        { path: "logout", element: <Logout /> },
-        {path: "category", element: <CategoryList />},
-        {path: "budget", element: <BudgetList />}
-        ],
-    hydrateFallbackElement: <p>Loading...</p>,
+      {
+        path: 'login',
+        element: <Login />
+      },
+      {
+        path: 'dashboard',
+        element: <Home />
+      },
+      {
+        path: 'category',
+        element: <CategoryList />
+      },
+      {
+        path: 'budget',
+        element: <BudgetList />
+      },
+      {
+        path: 'register',
+        element: <Register />
+      },
+    ]
   },
 ];
 
