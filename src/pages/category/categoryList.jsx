@@ -15,6 +15,8 @@ import CategoryForm from "./CategoryForm";
 import AddCategoryForm from "./AddCategoryForm";
 import CategoryDelete from "./CategoryDelete";
 import { useDispatch, useSelector } from "react-redux";
+import { Badge } from "@/components/ui/badge";
+
 
 export default function CategoryList() {
   const { categories, isLoading, error } = useSelector((state) => state.category);
@@ -50,7 +52,7 @@ export default function CategoryList() {
             }}
           >
             <Plus />
-            Add Category
+            Add Custom Category
           </Button>
         </div>
         <div className=" bg-white rounded-lg py-4 px-4 overflow-y-auto">
@@ -81,30 +83,38 @@ export default function CategoryList() {
                     {category.name}
                   </TableCell>
                   <TableCell className="text-slate-800 font-normal">
-                    {category.category_type.charAt(0).toUpperCase() +
-                      category.category_type.slice(1)}
+                    <Badge variant={category.category_type=="income"?"success":"destructive"}>
+                      {category.category_type.charAt(0).toUpperCase() +
+                        category.category_type.slice(1)}
+                    </Badge>
                   </TableCell>
                   <TableCell className="flex justify-center items-center gap-2">
-                    <Button
-                      variant="outline"
-                      onClick={() => {
-                        setData(category);
-                        setIsOpen(true);
-                      }}
-                      className="w-10 hover:bg-slate-100"
-                    >
-                      <Pencil />
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      className="w-10"
-                      onClick={() => {
-                        setData(category);
-                        setIsDeleteOpen(true);
-                      }}
-                    >
-                      <Trash2 />
-                    </Button>
+                    {category.user_id ? (
+                      <>
+                        <Button
+                          variant="outline"
+                          onClick={() => {
+                            setData(category);
+                            setIsOpen(true);
+                          }}
+                          className="w-10 hover:bg-slate-100"
+                        >
+                          <Pencil />
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          className="w-10"
+                          onClick={() => {
+                            setData(category);
+                            setIsDeleteOpen(true);
+                          }}
+                        >
+                          <Trash2 />
+                        </Button>
+                      </>
+                    ) : (
+                      <Badge variant="secondary">Default</Badge>
+                    )}
                   </TableCell>
                 </TableRow>
               ))}
