@@ -4,9 +4,56 @@ import moment from "moment";
 
 export const fetchTransaction = createAsyncThunk(
   "/fetchTransaction",
-  async () => {
-    const response = await api.get("/transactions");
+  async (filters) => {
+    let url = "/transactions?";
+    if (filters) {
+      const { start_date, end_date, transaction_type, category_id } = filters;
+      if (start_date) url += `start_date=${start_date}&`;
+      if (end_date) url += `end_date=${end_date}&`;
+      if (transaction_type) url += `transaction_type=${transaction_type}&`;
+      if (category_id) url += `category_id=${category_id}&`;
+    }
+    url = url.slice(0, -1);
+    const response = await api.get(url);
     return response.data;
+  }
+);
+
+export const exportTransactions = createAsyncThunk(
+  "/exportTransactions",
+  async (filters) => {
+    try {
+      let url = "/transactions/download?";
+      if (filters) {
+        const { start_date, end_date, transaction_type, category_id } = filters;
+        if (start_date) url += `start_date=${start_date}&`;
+        if (end_date) url += `end_date=${end_date}&`;
+        if (transaction_type) url += `transaction_type=${transaction_type}&`;
+        if (category_id) url += `category_id=${category_id}&`;
+      }
+      url = url.slice(0, -1);
+
+      const response = await api.get(url, { responseType: 'blob' });
+
+      const blob = new Blob([response.data], {
+        type: 'application/pdf',
+      });
+
+      const file_url = window.URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.href = file_url;
+      a.download = 'transactions.pdf';
+      document.body.appendChild(a);
+      a.click();
+
+      window.URL.revokeObjectURL(file_url);
+
+
+      return true;
+    } catch (error) {
+      console.log(error)
+    }
   }
 );
 
@@ -39,6 +86,7 @@ const transactionSlice = createSlice({
   initialState: {
     transactions: [],
     isLoading: false,
+    isExport: false,
     error: null,
   },
   reducers: {},
@@ -54,6 +102,16 @@ const transactionSlice = createSlice({
       .addCase(fetchTransaction.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error.message;
+      })
+      .addCase(exportTransactions.pending, (state) => {
+        state.isExport = true
+      })
+      .addCase(exportTransactions.fulfilled, (state) => {
+        state.isExport = false
+      })
+      .addCase(exportTransactions.rejected, (state, action) => {
+        state.error = action.error.message;
+        state.isExport = false
       })
       .addCase(addTransaction.fulfilled, (state, action) => {
         const { date } = action.payload;

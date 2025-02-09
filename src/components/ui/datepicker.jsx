@@ -18,10 +18,13 @@ export function DatePicker({ value, setValue }) {
     if (value) {
       setDate(new Date(value));
     }
+    if (value=="") {
+      setDate();
+    }
   }, [value]);
 
   return (
-    <Popover onOpenChange={setIsOpen} open={isOpen}>
+    <Popover onOpenChange={setIsOpen} open={isOpen} modal={isOpen}>
       <PopoverTrigger asChild>
         <Button
           variant={"outline"}
