@@ -1,25 +1,28 @@
 import {useDispatch, useSelector} from "react-redux"
 import {selectEmail, setEmail} from "../../redux/features/loginSlice"
 import {toast} from "react-toastify"
-import {useNavigate} from "react-router"
+import {useNavigate, useSearchParams} from "react-router"
 import authServices from "../../services/authServices"
 import {Label} from "@/components/ui/label"
 import {Input} from "@/components/ui/input"
 import {Button} from "@/components/ui/button"
 
 const OTPverification = () => {
-  const email = useSelector(selectEmail)
-
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
+  const [searchParams, setSearchParams] = useSearchParams();
+  let email = searchParams.get("email");
+  let otp = "";
+  
   const navigate = useNavigate()
+  
 
   const handleOTPverification = async e => {
     e.preventDefault()
     try {
-      const response = await authServices.login({email})
-
+      const response = await authServices.verifyOtp(email, otp)
       if (response.status === 200) {
-        setIsEmailSent(true)
+        toast.success('Email verified successfully');
+        navigate("/auth/login");
       }
     } catch (error) {
       toast.error(error.response.data.message)
@@ -28,13 +31,13 @@ const OTPverification = () => {
 
   return (
     <>
-      <div className="w-[550px] mx-auto mt-20 p-12 shadow-xl border border-slate-100 rounded-sm bg-white">
-        <div className="flex gap-14 flex-col">
+      <div className="lg:min-w-[30vw] px-8 py-6 shadow-xl border border-slate-100 rounded-sm bg-white">
+        <div className="flex gap-6 flex-col">
           <div className="flex items-center justify-center flex-col gap-3">
-            <div className="text-slate-900 font-semibold text-3xl">
+            <div className="text-slate-900 font-semibold text-2xl">
               OTP Verification
             </div>
-            <span className="text-slate-500 text-lg">
+            <span className="text-slate-500 text-base">
               Enter your OTP code sent your email account
             </span>
           </div>
@@ -50,8 +53,7 @@ const OTPverification = () => {
                   type="text"
                   placeholder="Enter OTP"
                   className="h-10"
-                  value={email}
-                  onChange={e => dispatch(setEmail(e.target.value))}
+                  onChange={(e)=>otp=e.target.value}
                 />
               </div>
             </div>
@@ -70,4 +72,4 @@ const OTPverification = () => {
   )
 }
 
-export default OTPverification
+export default OTPverification;

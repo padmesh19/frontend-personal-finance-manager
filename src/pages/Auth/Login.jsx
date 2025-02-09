@@ -1,70 +1,76 @@
-import {useDispatch, useSelector} from "react-redux"
+import { useDispatch, useSelector } from "react-redux";
 import {
   selectEmail,
   selectPassword,
   setEmail,
   setPassword,
-} from "../../redux/features/loginSlice"
-import {toast} from "react-toastify"
-import {Link, useNavigate} from "react-router"
-import authServices from "../../services/authServices"
-import {setUser} from "../../redux/features/userSlice"
-import {fetchBudget} from "@/redux/features/budgetSlice"
-import {fetchCategory} from "@/redux/features/categorySlice"
-import {fetchTransaction} from "@/redux/features/transactionSlice"
-import {fetchGoal} from "@/redux/features/goalSlice"
-import {Label} from "@/components/ui/label"
-import {Input} from "@/components/ui/input"
-import {Button} from "@/components/ui/button"
+} from "../../redux/features/loginSlice";
+import { toast } from "react-toastify";
+import { Link, useNavigate } from "react-router";
+import authServices from "../../services/authServices";
+import { setIsLoading, setUser } from "../../redux/features/userSlice";
+import { fetchBudget } from "@/redux/features/budgetSlice";
+import { fetchCategory } from "@/redux/features/categorySlice";
+import { fetchTransaction } from "@/redux/features/transactionSlice";
+import { fetchGoal } from "@/redux/features/goalSlice";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 const Login = () => {
-  const email = useSelector(selectEmail)
-  const password = useSelector(selectPassword)
+  const email = useSelector(selectEmail);
+  const password = useSelector(selectPassword);
 
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const handleLogin = async e => {
-    e.preventDefault()
+  const handleLogin = async (e) => {
+    e.preventDefault();
     try {
-      const response = await authServices.login({email, password})
+      const response = await authServices.login({ email, password });
 
       if (response.status === 200) {
-        toast.success("Logged in successfully")
+        if (response.data.message=="mfa-enabled") {
+          navigate(`/auth/mfa-enabled?email=${email}`, { replace: true });
+        } else {
+          toast.success("Logged in successfully");
 
-        // call the authLoader to get the user data
-        const response = await authServices.me()
-        dispatch(setUser(response.data))
+          // call the authLoader to get the user data
+          const response = await authServices.me();
+          dispatch(setUser(response.data));
 
-        // clear the form
-        dispatch(setEmail(""))
-        dispatch(setPassword(""))
+          // clear the form
+          dispatch(setEmail(""));
+          dispatch(setPassword(""));
+          dispatch(setIsLoading(false));
 
-        if (response) {
-          dispatch(fetchBudget())
-          dispatch(fetchCategory())
-          dispatch(fetchTransaction())
-          dispatch(fetchGoal())
+          if (response) {
+            dispatch(fetchBudget());
+            dispatch(fetchCategory());
+            dispatch(fetchTransaction());
+            dispatch(fetchGoal());
+          }
+
+          // redirect to home page
+          setTimeout(() => {
+            navigate("/dashboard", { replace: true });
+          }, 500);
         }
-
-        // redirect to home page
-        setTimeout(() => {
-          navigate("/dashboard", {replace: true})
-        }, 500)
       }
     } catch (error) {
-      toast.error(error.response.data.message)
+      console.log(error)
+      toast.error(error.response.data.message);
     }
-  }
+  };
 
   return (
-    <div className="w-[550px] mx-auto mt-20 p-12 shadow-xl border border-slate-100 rounded-sm bg-white">
-      <div className="flex gap-14 flex-col">
+    <div className="lg:min-w-[30vw] px-8 py-6 shadow-xl border border-slate-100 rounded-lg bg-white">
+      <div className="flex gap-6 flex-col">
         <div className="flex items-center justify-center flex-col gap-3">
-          <div className="text-slate-900 font-semibold text-3xl">
+          <div className="text-slate-900 font-semibold text-2xl">
             Welcome Back!
           </div>
-          <span className="text-slate-500 text-lg">
+          <span className="text-slate-500 text-base">
             Enter your credentials to login into your account
           </span>
         </div>
@@ -78,7 +84,7 @@ const Login = () => {
                 placeholder="Enter email"
                 className="h-10"
                 value={email}
-                onChange={e => dispatch(setEmail(e.target.value))}
+                onChange={(e) => dispatch(setEmail(e.target.value))}
               />
             </div>
 
@@ -98,7 +104,7 @@ const Login = () => {
                 placeholder="Enter password"
                 className="h-10"
                 value={password}
-                onChange={e => dispatch(setPassword(e.target.value))}
+                onChange={(e) => dispatch(setPassword(e.target.value))}
               />
             </div>
           </div>
@@ -122,7 +128,7 @@ const Login = () => {
         </form>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

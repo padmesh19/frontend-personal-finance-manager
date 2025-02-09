@@ -10,13 +10,13 @@ const data = [
   {
     title: "Income",
     textColor: "#00cc7a",
-    icon: <ArrowUpCircle color="#00cc7a" size={60} />,
+    icon: <ArrowDownCircle color="#00cc7a" size={60} />,
     description: "Total earnings for the current month.",
   },
   {
     title: "Expense",
     textColor: "#e60000",
-    icon: <ArrowDownCircle color="#e60000" size={60} />,
+    icon: <ArrowUpCircle color="#e60000" size={60} />,
     description: "Total amount spent this month.",
   },
   {
@@ -64,4 +64,4 @@ const Cards = ({item}) => {
   )
 }
 
-export default Cards
+export default Cards;

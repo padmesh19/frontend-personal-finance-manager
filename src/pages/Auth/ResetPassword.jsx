@@ -1,7 +1,7 @@
 import {useDispatch, useSelector} from "react-redux"
 import {selectPassword, setPassword} from "../../redux/features/loginSlice"
 import {toast} from "react-toastify"
-import {useNavigate} from "react-router"
+import {useNavigate, useSearchParams} from "react-router"
 import authServices from "../../services/authServices"
 
 import {Label} from "@/components/ui/label"
@@ -9,28 +9,35 @@ import {Input} from "@/components/ui/input"
 import {Button} from "@/components/ui/button"
 
 const ResetPassword = () => {
-  const password = useSelector(selectPassword)
-
+  let password = "";
+  let confirmPassword = "";
+  const [searchParams, setSearchParams] = useSearchParams();
+  const resetToken = searchParams.get("resetToken");
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
   const handleResetPassword = async e => {
     e.preventDefault()
     try {
-      const response = await authServices.login({password})
+      const response = await authServices.resetPassword(resetToken, password);
+      if (response.status == 200) {
+        toast.success("Password reset successful")
+        navigate("/auth/login");
+      }
     } catch (error) {
+      console.log(error)
       toast.error(error.response.data.message)
     }
   }
 
   return (
-    <div className="w-[550px] mx-auto mt-20 p-12 shadow-xl border border-slate-100 rounded-sm bg-white">
-      <div className="flex gap-14 flex-col">
+    <div className="lg:min-w-[30vw] px-8 py-6 shadow-xl border border-slate-100 rounded-lg bg-white">
+      <div className="flex gap-6 flex-col">
         <div className="flex items-center justify-center flex-col gap-3">
-          <div className="text-slate-900 font-semibold text-3xl">
+          <div className="text-slate-900 font-semibold text-2xl">
             Reset Password
           </div>
-          <span className="text-slate-500 text-lg">
+          <span className="text-slate-500 text-base">
             The password should have atleast 6 characters
           </span>
         </div>
@@ -46,8 +53,7 @@ const ResetPassword = () => {
                 type="password"
                 placeholder="Enter password"
                 className="h-10"
-                value={password}
-                onChange={e => dispatch(setPassword(e.target.value))}
+                onChange={e => password=e.target.value}
               />
             </div>
 
@@ -58,8 +64,7 @@ const ResetPassword = () => {
                 type="password"
                 placeholder="Enter confirm password"
                 className="h-10"
-                value={password}
-                onChange={e => dispatch(setPassword(e.target.value))}
+                onChange={e => confirmPassword=e.target.value}
               />
             </div>
           </div>

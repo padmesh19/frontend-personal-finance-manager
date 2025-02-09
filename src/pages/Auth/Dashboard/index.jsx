@@ -28,7 +28,7 @@ const Dashboard = () => {
   return (
     <>
       {!isLoading ? (
-        <div className="px-14 mt-4 flex flex-col gap-4">
+        <div className="px-14 pb-10 mt-4 flex flex-col gap-4">
           <span className="text-3xl font-semibold text-slate-700">
             Dashboard
           </span>

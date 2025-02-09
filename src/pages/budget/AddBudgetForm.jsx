@@ -17,17 +17,13 @@ import {
 } from "@/components/ui/select"
 import {Input} from "@/components/ui/input"
 import {Label} from "@/components/ui/label"
-import {useEffect, useState} from "react"
-import categoryServices from "@/services/categoryServices"
+import {useState} from "react"
 import { toast } from "react-toastify"
 import { addBudget } from "@/redux/features/budgetSlice";
-import { useDispatch, useSelector } from "react-redux"
-import { categoryState } from "@/redux/features/categorySlice"
+import { useDispatch } from "react-redux"
 
-export default function AddBudgetForm({ isAddOpen, addToggle}) {
+export default function AddBudgetForm({ isAddOpen, addToggle, currCategory}) {
   const dispatch = useDispatch();
-  const { categories } = useSelector(categoryState);
-  const [currCategory, setCurrCategory] = useState([]);
   const [budgetData, setBudgetData] = useState({
     amount: "",
     spent: "",
@@ -35,14 +31,6 @@ export default function AddBudgetForm({ isAddOpen, addToggle}) {
     endDate: "",
     category_id: "",
   })
-
-  useEffect(() => {
-    const expense_category = categories.filter(
-      (data) => data.category_type == "expense"
-    );
-    console.log(expense_category)
-    setCurrCategory(expense_category);
-  },[])
 
   const handleSubmit = async () => {
       dispatch(addBudget(budgetData))

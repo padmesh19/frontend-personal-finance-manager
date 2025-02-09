@@ -5,38 +5,46 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import {useEffect, useState} from "react"
-import {Pencil, Trash2, Plus, Loader2} from "lucide-react"
-import {Button} from "@/components/ui/button"
-import BudgetForm from "./budgetForm"
-import BudgetDelete from "./budgetDelete"
-import AddBudgetForm from "./AddBudgetForm"
-import {useDispatch, useSelector} from "react-redux"
-import {fetchBudget} from "../../redux/features/budgetSlice"
+} from "@/components/ui/table";
+import { useEffect, useState } from "react";
+import { Pencil, Trash2, Plus, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import BudgetForm from "./budgetForm";
+import BudgetDelete from "./budgetDelete";
+import AddBudgetForm from "./AddBudgetForm";
+import { useSelector } from "react-redux";
+import { categoryState } from "@/redux/features/categorySlice";
 
 export default function BudgetList() {
-  const dispatch = useDispatch()
-  const {budgets, isLoading, error} = useSelector(state => state.budget)
-  const [isOpen, setIsOpen] = useState(false)
-  const [isAddOpen, setIsAddOpen] = useState(false)
-  const [isDeleteOpen, setIsDeleteOpen] = useState(false)
-  const [data, setData] = useState(null)
+  const { budgets, isLoading, error } = useSelector((state) => state.budget);
+  const { categories } = useSelector(categoryState);
+  const [currCategory, setCurrCategory] = useState([]);
+  const [isOpen, setIsOpen] = useState(false);
+  const [isAddOpen, setIsAddOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [data, setData] = useState(null);
 
   const toggle = () => {
-    setIsOpen(!isOpen)
-    setData(null)
-  }
+    setIsOpen(!isOpen);
+    setData(null);
+  };
 
   const deleteToggle = () => {
-    setIsDeleteOpen(!isDeleteOpen)
-    setData(null)
-  }
+    setIsDeleteOpen(!isDeleteOpen);
+    setData(null);
+  };
 
   const addToggle = () => {
-    setIsAddOpen(!isAddOpen)
-    setData("")
-  }
+    setIsAddOpen(!isAddOpen);
+    setData("");
+  };
+
+  useEffect(() => {
+    const expense_category = categories.filter(
+      (data) => data.category_type == "expense"
+    );
+    setCurrCategory(expense_category);
+  }, []);
 
   return (
     <>
@@ -47,7 +55,7 @@ export default function BudgetList() {
             <Button
               className="bg-orange-600 hover:bg-orange-700"
               onClick={() => {
-                setIsAddOpen(true)
+                setIsAddOpen(true);
               }}
             >
               <Plus />
@@ -55,18 +63,7 @@ export default function BudgetList() {
             </Button>
           </div>
 
-          {isLoading && !budgets.length && (
-            <div className=" bg-white min-h-[70vh] rounded-lg overflow-y-auto flex items-center justify-center">
-              <div className="max-h-screen w-full no-scrollbar h-full flex items-center justify-center ">
-                <Loader2 className="animate-spin" size={40} color="orange" />
-                <div className="text-slate-700 text-semibold text-md">
-                  Budgets Loading...
-                </div>
-              </div>
-            </div>
-          )}
-
-          {!isLoading && !!budgets.length && (
+          {!!budgets.length && (
             <div className=" bg-white rounded-lg py-4 px-4 overflow-y-auto">
               <Table>
                 <TableHeader className="[&_tr]:!border-0 bg-slate-200">
@@ -92,13 +89,16 @@ export default function BudgetList() {
                   </TableRow>
                 </TableHeader>
                 <TableBody className="[&_tr]:!border-l-0 [&_tr]:!border-r-0">
-                  {budgets.map(budget => (
+                  {budgets.map((budget) => (
                     <TableRow key={budget._id} className="border-b-slate-100">
                       <TableCell className="text-slate-800 font-medium">
                         {budget.amount}
                       </TableCell>
                       <TableCell className="text-slate-800 font-normal">
-                        {budget.category.map(category => category.name)}
+                        {currCategory.map((category) => {
+                          if (category._id == budget.category_id)
+                            return category.name;
+                        })}
                       </TableCell>
                       <TableCell className="text-slate-800 font-normal">
                         {budget.spent}
@@ -113,8 +113,8 @@ export default function BudgetList() {
                         <Button
                           variant="outline"
                           onClick={() => {
-                            setData(budget)
-                            setIsOpen(true)
+                            setData(budget);
+                            setIsOpen(true);
                           }}
                           className="w-10 hover:bg-slate-100"
                         >
@@ -124,8 +124,8 @@ export default function BudgetList() {
                           variant="destructive"
                           className="w-10"
                           onClick={() => {
-                            setData(budget)
-                            setIsDeleteOpen(true)
+                            setData(budget);
+                            setIsDeleteOpen(true);
                           }}
                         >
                           <Trash2 />
@@ -137,7 +137,7 @@ export default function BudgetList() {
               </Table>
             </div>
           )}
-          {!isLoading && !budgets.length && (
+          {!budgets.length && (
             <div className=" bg-white min-h-[70vh] rounded-lg py-4 px-4 overflow-y-auto flex items-center justify-center">
               <div className="max-h-screen h-full no-scrollbar">
                 <div className="text-slate-700 text-bold text-xl">No Data</div>
@@ -145,14 +145,23 @@ export default function BudgetList() {
             </div>
           )}
         </div>
-        <BudgetForm isOpen={isOpen} toggle={toggle} data={data} />
+        <BudgetForm
+          isOpen={isOpen}
+          toggle={toggle}
+          data={data}
+          currCategory={currCategory}
+        />
         <BudgetDelete
           isDeleteOpen={isDeleteOpen}
           deleteToggle={deleteToggle}
           data={data}
         />
-        <AddBudgetForm isAddOpen={isAddOpen} addToggle={addToggle} />
+        <AddBudgetForm
+          isAddOpen={isAddOpen}
+          addToggle={addToggle}
+          currCategory={currCategory}
+        />
       </div>
     </>
-  )
+  );
 }

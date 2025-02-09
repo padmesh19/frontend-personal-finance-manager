@@ -19,7 +19,7 @@ import {useState} from "react"
 import {Mail} from "lucide-react"
 
 const ForgotPassword = () => {
-  const email = useSelector(selectEmail)
+  let email = "";
 
   const [isEmailSent, setIsEmailSent] = useState(false)
 
@@ -29,10 +29,10 @@ const ForgotPassword = () => {
   const handleForgotPassword = async e => {
     e.preventDefault()
     try {
-      const response = await authServices.login({email})
+      const response = await authServices.forgotPassword(email)
 
       if (response.status === 200) {
-        setIsEmailSent(true)
+        setIsEmailSent(true);
       }
     } catch (error) {
       toast.error(error.response.data.message)
@@ -42,13 +42,13 @@ const ForgotPassword = () => {
   return (
     <>
       {!isEmailSent ? (
-        <div className="w-[550px] mx-auto mt-20 p-12 shadow-xl border border-slate-100 rounded-sm bg-white">
-          <div className="flex gap-14 flex-col">
+        <div className="lg:min-w-[30vw] mx-auto px-8 py-6 shadow-xl border border-slate-100 rounded-lg bg-white">
+          <div className="flex gap-6 flex-col">
             <div className="flex items-center justify-center flex-col gap-3">
-              <div className="text-slate-900 font-semibold text-3xl">
+              <div className="text-slate-900 font-semibold text-2xl">
                 Forgot Password?
               </div>
-              <span className="text-slate-500 text-lg">
+              <span className="text-slate-500 text-base">
                 No worries we will send you a reset instructions
               </span>
             </div>
@@ -64,8 +64,7 @@ const ForgotPassword = () => {
                     type="email"
                     placeholder="Enter email"
                     className="h-10"
-                    value={email}
-                    onChange={e => dispatch(setEmail(e.target.value))}
+                    onChange={(e) => (email = e.target.value)}
                   />
                 </div>
               </div>
@@ -81,13 +80,13 @@ const ForgotPassword = () => {
           </div>
         </div>
       ) : (
-        <div className="w-[550px] mx-auto mt-20 p-12 shadow-xl border border-slate-100 rounded-sm bg-white flex flex-col gap-6">
+        <div className="lg:min-w-[30vw] max-w-[550px] mx-auto px-8 py-6 shadow-xl border border-slate-100 rounded-sm bg-white flex flex-col gap-6">
           <div className="flex gap-2 flex-col items-center justify-center">
             <Mail color="orange" size={80} />
             <div className="text-slate-800 text-2xl font-semibold mt-5">
               Check you Inbox
             </div>
-            <div className="text-slate-600 text-lg text-center mt-2">
+            <div className="text-slate-600 text-base text-center mt-2">
               We have sent you a OTP and a verification link to reset your
               password. Please check your inbox and click the verficaion link.
             </div>
@@ -103,7 +102,7 @@ const ForgotPassword = () => {
         </div>
       )}
     </>
-  )
+  );
 }
 
 export default ForgotPassword

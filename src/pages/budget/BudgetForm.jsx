@@ -20,13 +20,10 @@ import {Label} from "@/components/ui/label"
 import {useEffect, useState} from "react"
 import { toast } from "react-toastify"
 import { updateBudget } from "@/redux/features/budgetSlice"
-import { useDispatch, useSelector } from "react-redux"
-import { categoryState } from "@/redux/features/categorySlice"
+import { useDispatch} from "react-redux"
 
-export default function BudgetForm({ isOpen, toggle, data }) {
+export default function BudgetForm({ isOpen, toggle, data, currCategory }) {
   const dispatch = useDispatch();
-  const { categories } = useSelector(categoryState);
-  const [currCategory, setCurrCategory] = useState([]);
   const [budgetData, setBudgetData] = useState({
     amount: data?.amount || "",
     spent: data?.spent || "",
@@ -46,13 +43,6 @@ export default function BudgetForm({ isOpen, toggle, data }) {
       });
     }
   }, [data])
-
-  useEffect(() => {
-    const expense_category = categories.filter(
-      (data) => data.category_type == "expense"
-    );
-    setCurrCategory(expense_category);
-  },[])
   
   const handleSubmit = async () => {
     dispatch(updateBudget({ id: data?._id, data: budgetData }));

@@ -21,7 +21,7 @@ const ProtectedRoute = () => {
       dispatch(fetchTransaction())
       dispatch(fetchGoal())
     }
-  }, [])
+  }, [dispatch])
 
   if (isLoading) {
     return (

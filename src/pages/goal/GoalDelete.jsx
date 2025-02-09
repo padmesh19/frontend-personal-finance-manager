@@ -8,9 +8,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-
-import { useEffect, useState } from "react";
-import goalServices from "@/services/goalServices";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { deleteGoal } from "@/redux/features/goalSlice";

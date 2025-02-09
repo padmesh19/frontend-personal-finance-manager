@@ -9,9 +9,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import categoryServices from "@/services/categoryServices";
 import EditTransactionComponent from "./EditTransactionComponent";
-import transactionServices from "@/services/transactionServices";
 import { useDispatch, useSelector } from "react-redux";
 import { categoryState } from "@/redux/features/categorySlice";
 import { toast } from "react-toastify";

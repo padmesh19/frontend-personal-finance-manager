@@ -12,8 +12,6 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TransactionForm } from "./TransactionForm";
 import { toast } from "react-toastify";
-import transactionServices from "@/services/transactionServices";
-import categoryServices from "@/services/categoryServices";
 import { useDispatch, useSelector } from "react-redux";
 import { categoryState } from "@/redux/features/categorySlice";
 import { addTransaction } from "@/redux/features/transactionSlice";
