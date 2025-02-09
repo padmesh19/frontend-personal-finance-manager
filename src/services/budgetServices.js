@@ -2,7 +2,8 @@ import instance from "./instance";
 
 const budgetServices = {
   getAllBudget: async () => {
-    return await instance.get("/budgets");
+    const response = await instance.get("/budgets");
+    return response.data;
   },
   getBudget: async (id) => {
     return await instance.get(`/budgets/${id}`);

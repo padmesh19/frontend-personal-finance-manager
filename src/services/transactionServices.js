@@ -7,8 +7,8 @@ const transactionServices = {
   getTransaction: async (id) => {
     return await instance.get(`/transactions/${id}`);
   },
-  addTransaction: async (id, data) => {
-    return await instance.post(`/transactions/${id}`, data);
+  addTransaction: async (data) => {
+    return await instance.post(`/transactions`, data);
   },
   updateTransaction: async (id, data) => {
     return await instance.put(`/transactions/${id}`, data);

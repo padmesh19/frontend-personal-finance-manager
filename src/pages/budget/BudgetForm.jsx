@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/button";
-import { DatePicker } from "@/components/ui/datepicker";
+import {Button} from "@/components/ui/button"
+import {DatePicker} from "@/components/ui/datepicker"
 import {
   Dialog,
   DialogContent,
@@ -7,31 +7,33 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+} from "@/components/ui/dialog"
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useEffect, useState } from "react";
-import budgetServices from "@/services/budgetServices";
-import categoryServices from "@/services/categoryServices";
-import { toast } from "react-toastify";
+} from "@/components/ui/select"
+import {Input} from "@/components/ui/input"
+import {Label} from "@/components/ui/label"
+import {useEffect, useState} from "react"
+import { toast } from "react-toastify"
+import { updateBudget } from "@/redux/features/budgetSlice"
+import { useDispatch, useSelector } from "react-redux"
+import { categoryState } from "@/redux/features/categorySlice"
 
 export default function BudgetForm({ isOpen, toggle, data }) {
+  const dispatch = useDispatch();
+  const { categories } = useSelector(categoryState);
+  const [currCategory, setCurrCategory] = useState([]);
   const [budgetData, setBudgetData] = useState({
     amount: data?.amount || "",
     spent: data?.spent || "",
     startDate: data?.period?.startDate || "",
     endDate: data?.period?.endDate || "",
-  });
+    category_id: data?.category_id || ""
+  })
 
   useEffect(() => {
     if (data) {
@@ -40,37 +42,36 @@ export default function BudgetForm({ isOpen, toggle, data }) {
         spent: data?.spent || "",
         startDate: data?.period?.startDate || "",
         endDate: data?.period?.endDate || "",
+        category_id: data?.category_id || "",
       });
     }
-  }, [data]);
+  }, [data])
 
-  const [categories, setCategories] = useState([]);
-
-  const fetchCategory = async () => {
-    const response = await categoryServices.getAllCategory();
-    setCategories(response.data);
-  };
   useEffect(() => {
-    fetchCategory();
-  }, []);
-
+    const expense_category = categories.filter(
+      (data) => data.category_type == "expense"
+    );
+    setCurrCategory(expense_category);
+  },[])
+  
   const handleSubmit = async () => {
-    const response = await budgetServices.updateBudget(data._id, budgetData);
-    toggle();
-    toast.success("Budget updated successfully");
-  };
+    dispatch(updateBudget({ id: data?._id, data: budgetData }));
+    toggle()
+    toast.success("Budget updated successfully")
+  }
 
   const inputData = (key, value) => {
-    setBudgetData((state) => ({ ...state, [key]: value }));
-  };
+    setBudgetData(state => ({...state, [key]: value}))
+  }
 
   return (
     <Dialog open={isOpen}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] max-w-[95vw] md:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle>Edit budget</DialogTitle>
+          <DialogTitle>Edit Budget Details</DialogTitle>
           <DialogDescription>
-            Make changes to your budget here. Click save when you're done.
+            Make changes to your budget here. Click{" "}
+            <span className="font-bold">Save</span> button when you're done.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
@@ -133,13 +134,18 @@ export default function BudgetForm({ isOpen, toggle, data }) {
               Category
             </Label>
             <div className="col-span-3">
-              <Select onValueChange={inputData}>
+              <Select
+                value={budgetData?.category_id}
+                onValueChange={(val) => {
+                  inputData("category_id", val);
+                }}
+              >
                 <SelectTrigger className="h-9 bg-white">
                   <SelectValue placeholder="Select a category" />
                 </SelectTrigger>
                 <SelectContent>
-                  {categories.map((category) => (
-                    <SelectItem key={category._id} value={category.name}>
+                  {currCategory.map((category) => (
+                    <SelectItem key={category._id} value={category._id}>
                       {category.name}
                     </SelectItem>
                   ))}
@@ -153,7 +159,11 @@ export default function BudgetForm({ isOpen, toggle, data }) {
           <Button type="submit" variant="outline" onClick={toggle}>
             Cancel
           </Button>
-          <Button type="submit" onClick={handleSubmit}>
+          <Button
+            type="submit"
+            className="bg-orange-600 hover:bg-orange-700"
+            onClick={handleSubmit}
+          >
             Save changes
           </Button>
         </DialogFooter>

@@ -21,10 +21,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useEffect, useState } from "react";
-import categoryServices from "@/services/categoryServices";
 import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { addCategory } from "@/redux/features/categorySlice";
 
 export default function AddCategoryForm({ isAddOpen, addToggle }) {
+  const dispatch = useDispatch();
   const [categoryData, setCategoryData] = useState({
     name: "",
     category_type:""
@@ -32,7 +34,7 @@ export default function AddCategoryForm({ isAddOpen, addToggle }) {
 
   const handleSubmit = async () => {
     if (categoryData.name && categoryData.category_type) {
-      const response = await categoryServices.addCategory(categoryData);
+      dispatch(addCategory(categoryData))
       addToggle();
       toast.success("Category added successfully");
       setCategoryData({
@@ -51,28 +53,30 @@ export default function AddCategoryForm({ isAddOpen, addToggle }) {
 
   return (
     <Dialog open={isAddOpen}>
-      <DialogContent className="max-w-[80vw] sm:max-w-[425px] rounded-lg">
+      <DialogContent className="sm:max-w-[425px] md:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle>Add Category</DialogTitle>
+          <DialogTitle>Add Category Details</DialogTitle>
           <DialogDescription>
-            Add your category here. Click add when you're done.
+            Add your category here. Click{" "}
+            <span className="font-bold">Save</span> button when you're done.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-3 items-center gap-4">
+          <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="name" className="text-right">
               Category Name
             </Label>
             <Input
               id="name"
               type="text"
+              value={categoryData?.name}
               onChange={(e) => {
                 inputData("name", e.target.value);
               }}
-              className="col-span-2"
+              className="col-span-3"
             />
           </div>
-          <div className="grid grid-cols-3 items-center gap-4">
+          <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="" className="text-right">
               Category Type
             </Label>
@@ -108,7 +112,7 @@ export default function AddCategoryForm({ isAddOpen, addToggle }) {
             Cancel
           </Button>
           <Button type="submit" onClick={handleSubmit}>
-            Add Category
+            Save changes
           </Button>
         </DialogFooter>
       </DialogContent>

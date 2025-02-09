@@ -8,25 +8,29 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { deleteCategory } from "@/redux/features/categorySlice";
-import { useDispatch } from "react-redux";
-import { toast } from "react-toastify";
 
-export default function CategoryDelete({ isDeleteOpen, deleteToggle, data }) {
-   const dispatch = useDispatch();
+import { useEffect, useState } from "react";
+import transactionServices from "@/services/transactionServices";
+import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { deleteTransaction } from "@/redux/features/transactionSlice";
+
+export default function TransactionDelete({ isDeleteOpen, deleteToggle, data }) {
+  const dispatch = useDispatch()
   const handleSubmit = async () => {
-    dispatch(deleteCategory(data?._id));
-    deleteToggle();
-    toast.success("Category deleted successfully");
+    if (dispatch(deleteTransaction(data?._id))) {
+      deleteToggle();
+      toast.success("Transaction deleted successfully");
+    }
   };
 
   return (
     <Dialog open={isDeleteOpen}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Delete Category</DialogTitle>
+          <DialogTitle>Delete transaction</DialogTitle>
           <DialogDescription>
-            Are you sure want to delete this category?. Click{" "}
+            Are you sure want to delete this transaction?. Click{" "}
             <span className="font-bold">Delete</span> button to confirm.
           </DialogDescription>
         </DialogHeader>

@@ -9,6 +9,6 @@ import App from './App';
 createRoot(document.getElementById('root')).render(
     <Provider store={store}>
         <App/>
-        <ToastContainer position='top-center' autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
+        <ToastContainer position='top-center' autoClose={1000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
     </Provider>
 );

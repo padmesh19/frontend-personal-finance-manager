@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/button";
-import { DatePicker } from "@/components/ui/datepicker";
+import {Button} from "@/components/ui/button"
+import {DatePicker} from "@/components/ui/datepicker"
 import {
   Dialog,
   DialogContent,
@@ -7,76 +7,68 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+} from "@/components/ui/dialog"
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useEffect, useState } from "react";
-import budgetServices from "@/services/budgetServices";
-import categoryServices from "@/services/categoryServices";
-import { toast } from "react-toastify";
+} from "@/components/ui/select"
+import {Input} from "@/components/ui/input"
+import {Label} from "@/components/ui/label"
+import {useEffect, useState} from "react"
+import categoryServices from "@/services/categoryServices"
+import { toast } from "react-toastify"
+import { addBudget } from "@/redux/features/budgetSlice";
+import { useDispatch, useSelector } from "react-redux"
+import { categoryState } from "@/redux/features/categorySlice"
 
-export default function AddBudgetForm({ isAddOpen, addToggle }) {
+export default function AddBudgetForm({ isAddOpen, addToggle}) {
+  const dispatch = useDispatch();
+  const { categories } = useSelector(categoryState);
+  const [currCategory, setCurrCategory] = useState([]);
   const [budgetData, setBudgetData] = useState({
     amount: "",
     spent: "",
-    startDate: Date.now(),
+    startDate: new Date(),
     endDate: "",
     category_id: "",
-  });
-  const [categories, setCategories] = useState([]);
+  })
 
-  const fetchCategory = async () => {
-    const response = await categoryServices.getAllCategory();
-    setCategories(response.data);
-  };
   useEffect(() => {
-    fetchCategory();
-  }, []);
-
+    const expense_category = categories.filter(
+      (data) => data.category_type == "expense"
+    );
+    console.log(expense_category)
+    setCurrCategory(expense_category);
+  },[])
 
   const handleSubmit = async () => {
-      if (
-        budgetData.amount &&
-        budgetData.category_id &&
-        budgetData.spent &&
-        budgetData.endDate
-      ) {
-        const response = await budgetServices.addBudget(budgetData);
-        addToggle();
-        toast.success("Budget added successfully");
-        setBudgetData({
-          amount: "",
-          spent: "",
-          startDate: Date.now(),
-          endDate: Date.now(),
-          category_id: "",
-        });
-      } else {
-        toast.error("Fill all the details");
-      }
-  };
+      dispatch(addBudget(budgetData))
+      addToggle()
+      toast.success("Budget added successfully")
+      setBudgetData({
+        amount: "",
+        spent: "",
+        startDate: new Date(),
+        endDate: "",
+        category_id: "",
+      })
+  }
 
   const inputData = (key, value) => {
-    setBudgetData((state) => ({ ...state, [key]: value }));
-  };
+    setBudgetData(state => ({...state, [key]: value}))
+  }
 
   return (
     <Dialog open={isAddOpen}>
-      <DialogContent className="max-w-[80vw] sm:max-w-[425px] rounded-lg">
+      <DialogContent className="md:max-w-[600px] sm:max-w-[425px] rounded-lg">
         <DialogHeader>
-          <DialogTitle>Add budget</DialogTitle>
+          <DialogTitle>Add a New Budget</DialogTitle>
           <DialogDescription>
-            Add your budget here. Click add when you're done.
+            Add your budget here. Click <span className="font-bold">Add</span>{" "}
+            when you're done.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
@@ -87,8 +79,8 @@ export default function AddBudgetForm({ isAddOpen, addToggle }) {
             <Input
               id="amount"
               type="number"
-              onChange={(e) => {
-                inputData("amount", e.target.value);
+              onChange={e => {
+                inputData("amount", e.target.value)
               }}
               className="col-span-3"
             />
@@ -100,8 +92,8 @@ export default function AddBudgetForm({ isAddOpen, addToggle }) {
             <Input
               id="spent"
               type="number"
-              onChange={(e) => {
-                inputData("spent", e.target.value);
+              onChange={e => {
+                inputData("spent", e.target.value)
               }}
               className="col-span-3"
             />
@@ -112,8 +104,8 @@ export default function AddBudgetForm({ isAddOpen, addToggle }) {
             </Label>
             <div className="col-span-3">
               <DatePicker
-                setValue={(val) => {
-                  inputData("startDate", val);
+                setValue={val => {
+                  inputData("startDate", val)
                 }}
               />
             </div>
@@ -124,8 +116,8 @@ export default function AddBudgetForm({ isAddOpen, addToggle }) {
             </Label>
             <div className="col-span-3">
               <DatePicker
-                setValue={(val) => {
-                  inputData("endDate", val);
+                setValue={val => {
+                  inputData("endDate", val)
                 }}
               />
             </div>
@@ -135,12 +127,16 @@ export default function AddBudgetForm({ isAddOpen, addToggle }) {
               Category
             </Label>
             <div className="col-span-3">
-              <Select onValueChange={(e) => { inputData("category_id", e); }}> 
+              <Select
+                onValueChange={e => {
+                  inputData("category_id", e)
+                }}
+              >
                 <SelectTrigger className="h-9 bg-white">
                   <SelectValue placeholder="Select a category" />
                 </SelectTrigger>
-                <SelectContent >
-                  {categories.map((category) => (
+                <SelectContent>
+                  {currCategory.map(category => (
                     <SelectItem key={category._id} value={category._id}>
                       {category.name}
                     </SelectItem>
@@ -155,11 +151,15 @@ export default function AddBudgetForm({ isAddOpen, addToggle }) {
           <Button type="submit" variant="outline" onClick={addToggle}>
             Cancel
           </Button>
-          <Button type="submit" onClick={handleSubmit}>
+          <Button
+            type="submit"
+            className="bg-orange-600 hover:bg-orange-700"
+            onClick={handleSubmit}
+          >
             Add Budget
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  );
+  )
 }

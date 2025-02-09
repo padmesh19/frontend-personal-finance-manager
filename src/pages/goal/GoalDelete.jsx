@@ -10,31 +10,39 @@ import {
 } from "@/components/ui/dialog";
 
 import { useEffect, useState } from "react";
-import budgetServices from "@/services/budgetServices";
+import goalServices from "@/services/goalServices";
 import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { deleteGoal } from "@/redux/features/goalSlice";
 
-export default function BudgetDelete({ isDeleteOpen, deleteToggle, data }) {
+export default function GoalDelete({ isDeleteOpen, deleteToggle, data }) {
+  const dispatch = useDispatch();
   const handleSubmit = async () => {
-      const response = await budgetServices.deleteBudget(data._id);
+    dispatch(deleteGoal(data?._id))
     deleteToggle();
-    toast.success("Budget deleted successfully");
+    toast.success("Goal deleted successfully");
   };
 
   return (
     <Dialog open={isDeleteOpen}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Delete budget</DialogTitle>
+          <DialogTitle>Delete goal</DialogTitle>
           <DialogDescription>
-            Are you sure want to delete this Budget. Click Delete when you confirmed.
+            Are you sure want to delete this goal?. Click{" "}
+            <span className="font-bold">Delete</span> button to confirm.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
           <Button type="submit" variant="outline" onClick={deleteToggle}>
             Cancel
           </Button>
-          <Button type="submit" onClick={handleSubmit}>
-           Delete
+          <Button
+            type="submit"
+            className="bg-red-600 hover:bg-red-700"
+            onClick={handleSubmit}
+          >
+            Delete
           </Button>
         </DialogFooter>
       </DialogContent>

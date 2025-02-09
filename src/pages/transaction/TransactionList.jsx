@@ -1,48 +1,49 @@
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Pencil, Trash2, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import CategoryForm from "./CategoryForm";
-import AddCategoryForm from "./AddCategoryForm";
-import CategoryDelete from "./CategoryDelete";
-import { useDispatch, useSelector } from "react-redux";
 
-export default function CategoryList() {
-  const { categories, isLoading, error } = useSelector((state) => state.category);
+import AddTransaction from "./AddTransaction";
+import EditTransactionForm from "./EditTransaction/index";
+import TransactionDelete from "./TransactionDelete";
+import {  useSelector } from "react-redux";
+import { categoryState } from "@/redux/features/categorySlice";
+
+export default function TransactionList() {
+  const {categories} = useSelector(categoryState)
+  const { transactions, isLoading, error } = useSelector((state) => state.transaction);
   const [isOpen, setIsOpen] = useState(false);
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [data, setData] = useState(null);
-
+  
   const toggle = () => {
     setIsOpen(!isOpen);
     setData(null);
   };
-
   const deleteToggle = () => {
     setIsDeleteOpen(!isDeleteOpen);
     setData(null);
   };
-
   const addToggle = () => {
     setIsAddOpen(!isAddOpen);
     setData("");
   };
 
+  console.log(categories)
+
   return (
     <div className="flex justify-center items-start">
       <div className="h-fit max-h-[80vh] w-full flex flex-col gap-4 px-10">
         <div className="flex justify-between items-center gap-2">
-          <span className="text-xl font-semibold">Categories</span>
+          <span className="text-xl font-semibold">Transactions</span>
           <Button
             className="bg-orange-600 hover:bg-orange-700"
             onClick={() => {
@@ -50,7 +51,7 @@ export default function CategoryList() {
             }}
           >
             <Plus />
-            Add Category
+            Add Transaction
           </Button>
         </div>
         <div className=" bg-white rounded-lg py-4 px-4 overflow-y-auto">
@@ -58,13 +59,19 @@ export default function CategoryList() {
             <TableHeader className="[&_tr]:!border-0 bg-slate-200">
               <TableRow>
                 <TableHead className="text-slate-800 font-medium">
-                  S.NO
+                  Transaction amount
                 </TableHead>
                 <TableHead className="text-slate-800 font-medium">
-                  Category Name
+                  Transaction Date
                 </TableHead>
                 <TableHead className="text-slate-800 font-medium">
-                  Category Type
+                  Transaction Description
+                </TableHead>
+                <TableHead className="text-slate-800 font-medium">
+                  Transaction Type
+                </TableHead>
+                <TableHead className="text-slate-800 font-medium">
+                  Category
                 </TableHead>
                 <TableHead className="w-12 text-slate-800 font-medium text-center">
                   Actions
@@ -72,23 +79,31 @@ export default function CategoryList() {
               </TableRow>
             </TableHeader>
             <TableBody className="[&_tr]:!border-l-0 [&_tr]:!border-r-0">
-              {categories.map((category, index) => (
-                <TableRow key={category._id} className="border-b-slate-100">
+              {transactions.map((transaction) => (
+                <TableRow key={transaction._id} className="border-b-slate-100">
                   <TableCell className="text-slate-800 font-medium">
-                    {index + 1}
-                  </TableCell>
-                  <TableCell className="text-slate-800 font-medium">
-                    {category.name}
+                    {transaction.amount}
                   </TableCell>
                   <TableCell className="text-slate-800 font-normal">
-                    {category.category_type.charAt(0).toUpperCase() +
-                      category.category_type.slice(1)}
+                    {transaction.date}
+                  </TableCell>
+                  <TableCell className="text-slate-800 font-normal">
+                    {transaction.description}
+                  </TableCell>
+                  <TableCell className="text-slate-800 font-normal">
+                    {transaction.transaction_type}
+                  </TableCell>
+                  <TableCell className="text-slate-800 font-normal">
+                    {categories.map((category) => {
+                      if (category._id == transaction.category_id) {
+                      return category.name
+                    }})}
                   </TableCell>
                   <TableCell className="flex justify-center items-center gap-2">
                     <Button
                       variant="outline"
                       onClick={() => {
-                        setData(category);
+                        setData(transaction);
                         setIsOpen(true);
                       }}
                       className="w-10 hover:bg-slate-100"
@@ -99,7 +114,7 @@ export default function CategoryList() {
                       variant="destructive"
                       className="w-10"
                       onClick={() => {
-                        setData(category);
+                        setData(transaction);
                         setIsDeleteOpen(true);
                       }}
                     >
@@ -111,13 +126,13 @@ export default function CategoryList() {
             </TableBody>
           </Table>
         </div>
-        <CategoryForm isOpen={isOpen} toggle={toggle} data={data} />
-        <CategoryDelete
+        <EditTransactionForm isOpen={isOpen} toggle={toggle} data={data} />
+        <TransactionDelete
           isDeleteOpen={isDeleteOpen}
           deleteToggle={deleteToggle}
           data={data}
         />
-        <AddCategoryForm isAddOpen={isAddOpen} addToggle={addToggle} />
+        <AddTransaction isAddOpen={isAddOpen} addToggle={addToggle} />
       </div>
     </div>
   );

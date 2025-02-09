@@ -1,9 +1,7 @@
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -11,38 +9,42 @@ import {
 import { useEffect, useState } from "react";
 import { Pencil, Trash2, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import CategoryForm from "./CategoryForm";
-import AddCategoryForm from "./AddCategoryForm";
-import CategoryDelete from "./CategoryDelete";
+import goalServices from "@/services/goalServices";
+import GoalDelete from './GoalDelete';
+import GoalForm from './GoalForm';
+import AddGoalForm from "./AddGoalForm";
 import { useDispatch, useSelector } from "react-redux";
+import { goalState } from "@/redux/features/goalSlice";
 
-export default function CategoryList() {
-  const { categories, isLoading, error } = useSelector((state) => state.category);
+
+export default function GoalList() {
+  const dispatch = useDispatch();
+  const { goals } = useSelector(
+    goalState
+  );
   const [isOpen, setIsOpen] = useState(false);
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [data, setData] = useState(null);
-
   const toggle = () => {
     setIsOpen(!isOpen);
     setData(null);
   };
-
   const deleteToggle = () => {
     setIsDeleteOpen(!isDeleteOpen);
     setData(null);
   };
-
   const addToggle = () => {
     setIsAddOpen(!isAddOpen);
     setData("");
   };
 
+  console.log("Goals",goals)
   return (
     <div className="flex justify-center items-start">
       <div className="h-fit max-h-[80vh] w-full flex flex-col gap-4 px-10">
         <div className="flex justify-between items-center gap-2">
-          <span className="text-xl font-semibold">Categories</span>
+          <span className="text-xl font-semibold">Goals</span>
           <Button
             className="bg-orange-600 hover:bg-orange-700"
             onClick={() => {
@@ -50,7 +52,7 @@ export default function CategoryList() {
             }}
           >
             <Plus />
-            Add Category
+            Add Goals
           </Button>
         </div>
         <div className=" bg-white rounded-lg py-4 px-4 overflow-y-auto">
@@ -58,13 +60,19 @@ export default function CategoryList() {
             <TableHeader className="[&_tr]:!border-0 bg-slate-200">
               <TableRow>
                 <TableHead className="text-slate-800 font-medium">
-                  S.NO
+                  Goal Name
                 </TableHead>
                 <TableHead className="text-slate-800 font-medium">
-                  Category Name
+                  Target Amount
                 </TableHead>
                 <TableHead className="text-slate-800 font-medium">
-                  Category Type
+                  Current Amount
+                </TableHead>
+                <TableHead className="text-slate-800 font-medium">
+                  Deadline
+                </TableHead>
+                <TableHead className="text-slate-800 font-medium">
+                  Status
                 </TableHead>
                 <TableHead className="w-12 text-slate-800 font-medium text-center">
                   Actions
@@ -72,23 +80,29 @@ export default function CategoryList() {
               </TableRow>
             </TableHeader>
             <TableBody className="[&_tr]:!border-l-0 [&_tr]:!border-r-0">
-              {categories.map((category, index) => (
-                <TableRow key={category._id} className="border-b-slate-100">
+              {goals.map((goal) => (
+                <TableRow key={goal._id} className="border-b-slate-100">
                   <TableCell className="text-slate-800 font-medium">
-                    {index + 1}
-                  </TableCell>
-                  <TableCell className="text-slate-800 font-medium">
-                    {category.name}
+                    {goal.name}
                   </TableCell>
                   <TableCell className="text-slate-800 font-normal">
-                    {category.category_type.charAt(0).toUpperCase() +
-                      category.category_type.slice(1)}
+                    {goal.targetAmount}
+                  </TableCell>
+                  <TableCell className="text-slate-800 font-normal">
+                    {goal.currentAmount}
+                  </TableCell>
+                  <TableCell className="text-slate-800 font-normal">
+                    {goal.deadline}
+                  </TableCell>
+                  <TableCell className="text-slate-800 font-normal">
+                    {goal.status.charAt(0).toUpperCase() +
+                      goal.status.slice(1)}
                   </TableCell>
                   <TableCell className="flex justify-center items-center gap-2">
                     <Button
                       variant="outline"
                       onClick={() => {
-                        setData(category);
+                        setData(goal);
                         setIsOpen(true);
                       }}
                       className="w-10 hover:bg-slate-100"
@@ -99,7 +113,7 @@ export default function CategoryList() {
                       variant="destructive"
                       className="w-10"
                       onClick={() => {
-                        setData(category);
+                        setData(goal);
                         setIsDeleteOpen(true);
                       }}
                     >
@@ -111,13 +125,13 @@ export default function CategoryList() {
             </TableBody>
           </Table>
         </div>
-        <CategoryForm isOpen={isOpen} toggle={toggle} data={data} />
-        <CategoryDelete
+        <GoalForm isOpen={isOpen} toggle={toggle} data={data} />
+        <GoalDelete
           isDeleteOpen={isDeleteOpen}
           deleteToggle={deleteToggle}
           data={data}
         />
-        <AddCategoryForm isAddOpen={isAddOpen} addToggle={addToggle} />
+        <AddGoalForm isAddOpen={isAddOpen} addToggle={addToggle} />
       </div>
     </div>
   );

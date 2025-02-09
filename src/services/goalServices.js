@@ -7,8 +7,8 @@ const goalServices = {
   getGoal: async (id) => {
     return await instance.get(`/goals/${id}`);
   },
-  addGoal: async (id, data) => {
-    return await instance.post(`/goals/${id}`, data);
+  addGoal: async (data) => {
+    return await instance.post(`/goals`, data);
   },
   updateGoal: async (id, data) => {
     return await instance.put(`/goals/${id}`, data);
