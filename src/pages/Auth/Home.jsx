@@ -1,10 +1,4 @@
-import { fetchBudget } from "@/redux/features/budgetSlice";
-import { fetchCategory } from "@/redux/features/categorySlice";
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
-
-const Home = () => { 
-
+const Home = () => {
   return (
     <div className="w-full">
       <div className="text-center  w-full  p-4">
@@ -19,7 +13,7 @@ const Home = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home
