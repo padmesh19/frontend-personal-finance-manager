@@ -6,6 +6,7 @@ import budgetReducer from "../features/budgetSlice";
 import categoryReducer from "../features/categorySlice"
 import transactionReducer from "../features/transactionSlice"
 import goalReducer from "../features/goalSlice"
+import dashboardReducer from "../features/dashboardSlice"
 
 const store = configureStore({
   reducer: {
@@ -15,7 +16,8 @@ const store = configureStore({
     budget: budgetReducer,
     category: categoryReducer,
     transaction: transactionReducer,
-    goal: goalReducer
+    goal: goalReducer,
+    dashboard: dashboardReducer
   },
 });
 

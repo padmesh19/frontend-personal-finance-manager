@@ -1,7 +1,7 @@
 import {createBrowserRouter} from "react-router"
 
 import Register from "./pages/Auth/Register"
-import Home from "./pages/Auth/Home"
+import Dashboard from "./pages/Auth/Dashboard"
 import Login from "./pages/Auth/Login"
 import BudgetList from "./pages/budget/BudgetList"
 import CategoryList from "./pages/category/categoryList"
@@ -50,7 +50,7 @@ const routes = [
     children: [
       {
         path: "dashboard",
-        element: <Home />,
+        element: <Dashboard />,
       },
       {
         path: "category",
