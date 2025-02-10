@@ -18,7 +18,10 @@ import TransactionDelete from './TransactionDelete'
 import { useDispatch, useSelector } from 'react-redux'
 import { categoryState } from '@/redux/features/categorySlice'
 import { Filters } from './Filters'
-import { fetchTransaction, exportTransactions } from '@/redux/features/transactionSlice'
+import {
+    fetchTransaction,
+    exportTransactions,
+} from '@/redux/features/transactionSlice'
 import { Badge } from '@/components/ui/badge'
 
 const FiltersChip = ({ transactionFilters, clearFilter }) => {
@@ -160,15 +163,26 @@ export default function TransactionList() {
                             setFilterData={setFilterData}
                             transactionFilters={transactionFilters}
                         />
+                        <Button variant="outline" onClick={exportTransaction}>
+                            {!isExport ? (
+                                <div className="flex gap-1 items-center">
+                                    <FileDownIcon />
+                                    <span>Export</span>
+                                </div>
+                            ) : (
+                                <Loader2
+                                    className="animate-spin"
+                                    size={25}
+                                    color="orange"
+                                />
+                            )}
+                        </Button>
                         <Button
                             className="bg-orange-600 hover:bg-orange-700"
-                            onClick={()=>setIsAddOpen(true)}
+                            onClick={() => setIsAddOpen(true)}
                         >
                             <Plus />
                             Add Transaction
-                        </Button>
-                        <Button variant="outline" onClick={exportTransaction}>
-                            {!isExport?<FileDownIcon />:<Loader2 className="animate-spin" size={25} color="orange" />}
                         </Button>
                     </div>
                 </div>

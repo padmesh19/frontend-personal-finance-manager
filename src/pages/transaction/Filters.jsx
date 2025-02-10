@@ -34,8 +34,6 @@ export function Filters({ applyFilters, transactionFilters, setFilterData }) {
     const { categories } = useSelector(categoryState)
     const [open, setOpen] = useState(false)
 
-   
-
     const filterSubmit = () =>{
         applyFilters();
         setOpen(false);
